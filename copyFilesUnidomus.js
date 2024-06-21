@@ -1,34 +1,30 @@
-const {
-  srcPathsPolyglot,
-  basePathPolyglot,
-  controllersPolyglot,
-  routesPolyglot,
-  typesPolyglot,
-  modelsPolyglot,
-  restPolyglot,
-  servicesPolyglot,
-  categorizedPaths,
-  typesAndModelsPolyglot,
-} = require("./backend_polyglot");
+// src/copyFiles.js
 
 const fs = require("fs");
 const path = require("path");
-const { srcPathsUniDomus } = require("./Unidomus");
 
-function copyFilesToSingleFile(srcPaths, outputFile, basePath) {
+function copyFilesToSingleFile(
+  srcPaths,
+  outputFile,
+  basePath,
+  filterFn = () => true
+) {
   console.time(`Copying to ${outputFile}`);
   const writeStream = fs.createWriteStream(outputFile, { flags: "w" });
 
   srcPaths.forEach((srcPath) => {
     const absoluteSrcPath = path.resolve(basePath, srcPath);
-    const baseDir = absoluteSrcPath.endsWith(path.sep)
-      ? absoluteSrcPath.slice(0, -1)
-      : absoluteSrcPath;
-    if (fs.statSync(absoluteSrcPath).isDirectory()) {
-      copyDirectory(baseDir, baseDir, writeStream);
-    } else if (fs.statSync(absoluteSrcPath).isFile()) {
-      const relativePath = `./${path.relative(basePath, absoluteSrcPath)}`;
-      copyFile(absoluteSrcPath, relativePath, writeStream);
+    if (fs.existsSync(absoluteSrcPath)) {
+      if (fs.statSync(absoluteSrcPath).isDirectory()) {
+        copyDirectory(absoluteSrcPath, absoluteSrcPath, writeStream, filterFn);
+      } else if (fs.statSync(absoluteSrcPath).isFile()) {
+        const relativePath = `./${path.relative(basePath, absoluteSrcPath)}`;
+        if (filterFn(relativePath)) {
+          copyFile(absoluteSrcPath, relativePath, writeStream);
+        }
+      }
+    } else {
+      console.error(`Path does not exist: ${absoluteSrcPath}`);
     }
   });
 
@@ -37,15 +33,17 @@ function copyFilesToSingleFile(srcPaths, outputFile, basePath) {
   });
 }
 
-function copyDirectory(baseDir, currentDir, writeStream) {
+function copyDirectory(baseDir, currentDir, writeStream, filterFn) {
   const files = fs.readdirSync(currentDir);
   files.forEach((file) => {
     const fullPath = path.join(currentDir, file);
     if (fs.statSync(fullPath).isDirectory()) {
-      copyDirectory(baseDir, fullPath, writeStream);
+      copyDirectory(baseDir, fullPath, writeStream, filterFn);
     } else if (fs.statSync(fullPath).isFile()) {
       const relativePath = `./${path.relative(baseDir, fullPath)}`;
-      copyFile(fullPath, relativePath, writeStream);
+      if (filterFn(relativePath)) {
+        copyFile(fullPath, relativePath, writeStream);
+      }
     }
   });
 }
@@ -59,8 +57,23 @@ function copyFile(filePath, relativePath, writeStream) {
 // Example usage with timing:
 console.time("Total time");
 
-copyFilesToSingleFile(srcPathsUniDomus, "all.md", "/Users/panciut/UniDomus");
+const paths = ["src"]; // Ensure this is the correct relative path
+const basePath = "/Users/panciut/new_fronted"; // Ensure this is the correct base path
+
+// Copy all files
+copyFilesToSingleFile(paths, "all.md", basePath);
+
+// Copy files excluding *.styles.ts
+copyFilesToSingleFile(
+  paths,
+  "without_styles.md",
+  basePath,
+  (relativePath) => !relativePath.endsWith(".styles.ts")
+);
+
+// Copy only *.styles.ts files
+copyFilesToSingleFile(paths, "only_styles.md", basePath, (relativePath) =>
+  relativePath.endsWith(".styles.ts")
+);
 
 console.timeEnd("Total time");
-
-// node copyFiles.js

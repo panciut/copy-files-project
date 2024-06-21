@@ -118,11 +118,11 @@ function writeToFile(text, filePath) {
 }
 
 // Example usage:
-const ignoreDirs = ["node_modules", "venv", ".git"]; // Add directories you want to ignore
+const ignoreDirs = ["node_modules", "venv", ".git", "public"]; // Add directories you want to ignore
 
-writeToFile(generateTree(basePathPolyglot, ignoreDirs), "tree.md");
+writeToFile(generateTree("/Users/panciut/new_frontend", ignoreDirs), "tree.md");
 
-const srcPath = path.join(basePathPolyglot, "src");
+const srcPath = path.join("/Users/panciut/new_frontend", "src");
 writeToFile(generateTree(srcPath, ignoreDirs), "treeSrc.md");
 
 const treeFromPaths = generateTreeFromPaths(basePathPolyglot, srcPathsPolyglot);

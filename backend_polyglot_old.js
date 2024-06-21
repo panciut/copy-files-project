@@ -1,26 +1,41 @@
 const srcPathsPolyglot = [
   "src/controllers/card.controllers.ts",
+  "src/controllers/evaluationMetrics.controllers.ts",
+  "src/controllers/input.controllers.ts",
   "src/controllers/milestone.controllers.ts",
+  "src/controllers/output.controllers.ts",
   "src/controllers/task.controllers.ts",
   "src/routes/card.routes.ts",
+  "src/routes/evaluationMetric.routes.ts",
+  "src/routes/input.routes.ts",
   "src/routes/milestone.routes.ts",
+  "src/routes/output.routes.ts",
   "src/routes/task.routes.ts",
   "src/types/Card.ts",
   "src/types/EvaluationMetric.ts",
-  "src/types/ExecutionData.ts",
   "src/types/GenerativeModels.ts",
+  "src/types/Input.ts",
   "src/types/Milestone.ts",
+  "src/types/Output.ts",
   "src/types/Task.ts",
   "src/models/card.models.ts",
-  "src/models/executionData.models.ts",
+  "src/models/evaluationMetrics.models.ts",
+  "src/models/evaluationMetricTypes.models.ts",
+  "src/models/generativeModels.models.ts",
+  "src/models/history.models.ts",
+  "src/models/input.models.ts",
+  "src/models/inputTemplate.models.ts",
+  "src/models/inputTemplate.ts",
   "src/models/milestone.models.ts",
   "src/models/task.models.ts",
+  "src/models/output.models.ts",
   "src/config/openai.client.ts",
   "src/app.ts",
   "src/server.ts",
   "src/services/evaluation.services.ts",
   "src/services/execution.services.ts",
   "src/utils/prompt.utils.ts",
+  "src/config/openai.client.ts",
   "src/utils/inconsistency.utils.ts",
 ];
 
@@ -53,7 +68,6 @@ const categorizedPaths = [
   ...modelsPolyglot,
   ...servicesPolyglot,
 ];
-
 const typesAndModelsPolyglot = typesPolyglot.concat(modelsPolyglot);
 
 const restPolyglot = srcPathsPolyglot.filter(
